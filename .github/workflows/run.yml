@@ -1,0 +1,26 @@
+name: GLaDOS Daily Checkin
+
+on:
+  push:
+    branches: [ main, master ] # 兼容 main 或 master 分支
+  schedule:
+    # 每天北京时间上午 09:00 自动运行（UTC 时间 01:00）
+    - cron: '0 1 * * *'
+  workflow_dispatch: # 允许你手动点击按钮触发运行
+
+jobs:
+  checkin:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+
+    - name: 运行签到脚本
+      env:
+        GLA_COOKIE: ${{ secrets.GLA_COOKIE }}
+        GLA_LOG_FILE: ./glados.log
+        GLA_RANDOM_DELAY: 0 # 在 GitHub 跑建议关闭脚本自带的随机延迟
+      run: |
+        chmod +x ./glados_checkin.sh
+        ./glados_checkin.sh
